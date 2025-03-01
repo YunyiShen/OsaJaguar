@@ -114,7 +114,9 @@ generated quantities {
                 s[i] = categorical_rng(exp(logliklocal_occu));
             }
             else{
-                z[i] = bernoulli_rng(exp(log_psi[i]));
+                z[i] = bernoulli_rng(
+                    exp(loglik_ind_tmp - log_sum_exp(loglik_ind_tmp, log1m_exp(log_psi[1] * (1-sex[i]) + log_psi[2] * sex[i])))
+                );
                 s[i] = categorical_rng(exp(logliklocal_occu));
             }
             
