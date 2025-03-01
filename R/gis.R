@@ -1,5 +1,10 @@
 library(terra)
 library(sf)
+library(jsonlite)
+config <- jsonlite::fromJSON("config.json")
+
+res = config$resolution
+
 
 tri_function <- function(x) {
   center <- x[ceiling(length(x) / 2)]  # Get the center cell
@@ -18,11 +23,11 @@ ghm = project(ghm, crs(ele))
 writeRaster(ghm, "./processed_raster/gHM.tif")
 
 #### deal with elevation, ruggness and lclu ####
-lclu = rast("./rawraster/lulc_2017.tif")
-ele = rast("./rawraster/SRTM_30m_31971_AmistOsa.tif")
+lclu = rast("./rawdata/rawraster/lulc_2017.tif")
+ele = rast("./rawdata/rawraster/SRTM_30m_31971_AmistOsa.tif")
 rugg = focal(ele, w = matrix(1, 3, 3), fun = tri_function, na.policy = "omit")
 
-lclu = project(lclu, crs(ele), method = "near", res = c(1000, 1000))
+lclu = project(lclu, crs(ele), method = "near", res = res * c(1000, 1000))
 ele = resample(ele, lclu)
 rugg = resample(rugg, lclu)
 
