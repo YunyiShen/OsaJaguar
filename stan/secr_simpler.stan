@@ -19,21 +19,10 @@ data {
 
 parameters {
     // whether alive or not 
-    vector[2] log_psi_mean; // distance decay of survival probability
-    vector<lower = 0>[2] log_psi_var; // sd of beta
-    vector[N] log_psi; // survival probability
-
-    
-    
+    vector[2] log_psi; // survival probability
     // detection related 
-    vector[2] log_sigma_mean; // distance decay of detection probability
-    vector<lower = 0>[2] log_sigma_var; // sd of beta
-    vector[N] log_sigma; // sd of detection probability
-
-
-    vector[2] log_p0_mean; // detection probability at trap
-    vector<lower = 0>[2] log_p0_var; // sd of beta
-    vector[N] log_p0; // detection probability at trap
+    vector[2] log_sigma; // sd of detection probability decay
+    vector[2] log_p0; // detection probability at trap
 
     // activitiy center realted
     vector[n_env] betaenv;
@@ -53,35 +42,24 @@ model {
         log_softmax_Xbeta = log_softmax(envX * betaenv); // prior of activity center
         for(i in 1:N){
             for(j in 1:n_trap){
-                log_det = log_p0[i] - exp(log_sigma[i]) * distsqr[,j];
+                log_det = log_p0[1] * (1-sex[i]) + log_p0[2] * sex[i] - exp(log_sigma[1] * (1-sex[i]) + log_sigma[2] * sex[i]) * distsqr[,j];
                 loglikdetprob += yred[i,j] * log_det + (deployred[j] - yred[i,j]) * log1m_exp(log_det);
             }
 
-            logliklocal_occu = log_softmax_Xbeta + loglikdetprob + log_psi[i];
+            logliklocal_occu = log_softmax_Xbeta + loglikdetprob + log_psi[1] * (1-sex[i]) + log_psi[2] * sex[i];
             loglik_ind_tmp = log_sum_exp(logliklocal_occu);
             if (everdetected[i] == 1){
                 target += loglik_ind_tmp;
             }
             else{
-                target += log_sum_exp(loglik_ind_tmp, log1m_exp(log_psi[i]));
+                target += log_sum_exp(loglik_ind_tmp, log1m_exp(log_psi[1] * (1-sex[i]) + log_psi[2] * sex[i]));
             }
-
-            log_p0[i] ~ normal( log_p0_mean[1] * (1-sex[i]) + log_p0_mean[2] * sex[i],
-                                (log_p0_var[1] * (1-sex[i]) + log_p0_var[2] * sex[i])); 
-            log_psi[i] ~ normal(log_psi_mean[1] * (1-sex[i]) + log_psi_mean[2] * sex[i],
-                                (log_psi_var[1] * (1-sex[i]) + log_psi_var[2] * sex[i]));
-
-            log_sigma[i] ~ normal(log_sigma_mean[1] * (1-sex[i]) + log_sigma_mean[2] * sex[i],
-                                (log_sigma_var[1] * (1-sex[i]) + log_sigma_var[2] * sex[i]));
             
         }
         // priors
-        log_psi_mean ~ normal(0, 1);
-        log_psi_var ~ normal(0, .1);
-        log_sigma_mean ~ normal(0, 1);
-        log_sigma_var ~ normal(0, .1);
-        log_p0_mean ~ normal(0, 1);
-        log_p0_var ~ normal(0, .1);
+        log_psi ~ normal(0, 1);
+        log_sigma ~ normal(0, 10);
+        log_p0 ~ normal(0, 1);
         betaenv ~ normal(0, 100);
     }
 }
@@ -103,18 +81,18 @@ generated quantities {
         log_softmax_Xbeta = log_softmax(envX * betaenv); // prior of activity center
         for (i in 1:N){
             for (j in 1:n_trap){
-                log_det = log_p0[i] - exp(log_sigma[i]) * distsqr[,j];
+                log_det = log_p0[1] * (1-sex[i]) + log_p0[2] * sex[i] - exp(log_sigma[1] * (1-sex[i]) + log_sigma[2] * sex[i]) * distsqr[,j];
                 loglikdetprob += yred[i,j] * log_det + (deployred[j] - yred[i,j]) * log1m_exp(log_det);
             }
 
-            logliklocal_occu = log_softmax_Xbeta + loglikdetprob + log_psi[i];
+            logliklocal_occu = log_softmax_Xbeta + loglikdetprob + log_psi[1] * (1-sex[i]) + log_psi[2] * sex[i];
             loglik_ind_tmp = log_sum_exp(logliklocal_occu);
             if (everdetected[i] == 1){
                 z[i] = 1;
                 s[i] = categorical_rng(exp(logliklocal_occu));
             }
             else{
-                z[i] = bernoulli_rng(exp(log_psi[i]));
+                z[i] = bernoulli_rng(exp(log_psi[1] * (1-sex[i]) + log_psi[2] * sex[i]));
                 s[i] = categorical_rng(exp(logliklocal_occu));
             }
             

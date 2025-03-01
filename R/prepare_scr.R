@@ -19,7 +19,7 @@ sex = c(ind_ids$Sexidx, augment_sex) # the rest being half half
 deployred = rowSums(trap_mat)
 
 stan_data = grid_obj
-stan_data$y_red = y_red
+stan_data$yred = y_red
 stan_data$everdetected = ever_detected
 stan_data$sex = sex
 stan_data$deployred = deployred

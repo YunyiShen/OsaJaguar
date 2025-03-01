@@ -18,13 +18,12 @@ load("./processed_data/scr_stan_data.rda")
 m_init <- stan_model("./stan/secr_simpler.stan")
 
 set.seed(12345)
-m_fit <- sampling(m_init,  data = stan_data,chains = 4, 
+m_fit <- vb(m_init,  data = stan_data, 
                     iter = config$stan_iters, 
                   init = function() list(log_psi = log(c(0.15, 0.15)), 
                                          log_p0 = log(c(.06, 0.06)), 
                                          beta = rep(0,stan_data$n_env)), 
-                  sample_file = "./res/scr_stan_fit12345_2024.csv",
-                  verbose = TRUE)
+                  sample_file = "./res/scr_stan_fit12345_vb.csv")
 
 save(m_fit, jaguar_trap_mats, stan_data, config,
-     file="./res/scr_stan_fit12345_2024.rda")
+     file="./res/scr_stan_fit12345_vb.rda")

@@ -1,2 +1,5 @@
 rawdata/*
 processed_data/*
+*.rds
+res/*
+*.sh.log*
