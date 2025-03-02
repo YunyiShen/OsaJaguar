@@ -17,6 +17,15 @@ data {
     matrix[n_grid, n_env] envX;
 }
 
+transformed data {
+   matrix[N,n_trap] binomial_normalization;
+   for (i in 1:N){
+       for (j in 1:n_trap){
+           binomial_normalization[i,j] = lchoose(deployred[j], yred[i,j]); // precompute binomial normalization
+       }
+   }
+}
+
 parameters {
     // whether alive or not 
     vector[2] log_psi_mean; // distance decay of survival probability
@@ -47,14 +56,15 @@ model {
         vector[n_grid] log_det; // log detection probability
         real loglik_ind_tmp;
 
-        loglikdetprob = rep_vector(0, n_grid);
-        logliklocal_occu = rep_vector(0, n_grid);
+        
 
         log_softmax_Xbeta = log_softmax(envX * betaenv); // prior of activity center
         for(i in 1:N){
+            loglikdetprob = rep_vector(0, n_grid);
+            logliklocal_occu = rep_vector(0, n_grid);
             for(j in 1:n_trap){
                 log_det = log_p0[i] - exp(log_sigma[i]) * distsqr[,j];
-                loglikdetprob += yred[i,j] * log_det + (deployred[j] - yred[i,j]) * log1m_exp(log_det);
+                loglikdetprob += yred[i,j] * log_det + (deployred[j] - yred[i,j]) * log1m_exp(log_det) + binomial_normalization[i,j];
             }
 
             logliklocal_occu = log_softmax_Xbeta + loglikdetprob + log_psi[i];
@@ -97,27 +107,28 @@ generated quantities {
 
         real loglik_ind_tmp;
 
-        loglikdetprob = rep_vector(0, n_grid);
-        logliklocal_occu = rep_vector(0, n_grid);
+        
 
         log_softmax_Xbeta = log_softmax(envX * betaenv); // prior of activity center
         for (i in 1:N){
+            loglikdetprob = rep_vector(0, n_grid);
+            logliklocal_occu = rep_vector(0, n_grid);
             for (j in 1:n_trap){
                 log_det = log_p0[i] - exp(log_sigma[i]) * distsqr[,j];
-                loglikdetprob += yred[i,j] * log_det + (deployred[j] - yred[i,j]) * log1m_exp(log_det);
+                loglikdetprob += loglikdetprob += yred[i,j] * log_det + (deployred[j] - yred[i,j]) * log1m_exp(log_det) + binomial_normalization[i,j];
             }
 
             logliklocal_occu = log_softmax_Xbeta + loglikdetprob + log_psi[i];
             loglik_ind_tmp = log_sum_exp(logliklocal_occu);
             if (everdetected[i] == 1){
                 z[i] = 1;
-                s[i] = categorical_rng(exp(logliklocal_occu));
+                s[i] = categorical_logit_rng(logliklocal_occu);
             }
             else{
                 z[i] = bernoulli_rng(
                     exp(loglik_ind_tmp - log_sum_exp(loglik_ind_tmp, log1m_exp(log_psi[1] * (1-sex[i]) + log_psi[2] * sex[i])))
                 );
-                s[i] = categorical_rng(exp(logliklocal_occu));
+                s[i] = categorical_logit_rng(logliklocal_occu);
             }
             
         }
