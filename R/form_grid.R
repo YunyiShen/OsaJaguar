@@ -10,7 +10,7 @@ grid_pts = as.matrix(grid[,c("x","y")]/scaling)
 trap_X = jaguar_trap_mats$ids$trap_ids[,c("x","y")]/scaling
 
 env_covar = as.matrix(grid[,c(3,4,5,7,8,9,10)])
-env_covar = scale(env_covar)
+env_covar[,2:4] = scale(env_covar[,2:4]) # scale continuous covariates
 print(nrow(grid_pts))
 distsqr = matrix(0, nrow = nrow(grid_pts), ncol = nrow(trap_X))
 for (i in 1:nrow(grid_pts)){

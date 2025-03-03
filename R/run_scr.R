@@ -21,8 +21,9 @@ set.seed(12345)
 m_fit <- sampling(m_init,  data = stan_data,chains = 4, 
                     iter = config$stan_iters, 
                   init = function() list(log_psi = log(c(0.15, 0.15)), 
-                                         log_p0 = log(c(.06, 0.06)), 
-                                         beta = rep(0,stan_data$n_env)), 
+                                         log_p0 = log(c(.2, 0.2)), 
+                                         sigma = log(c(1.,1.)),
+                                         beta = rep(0,stan_data$n_env)),
                   sample_file = "./res/scr_stan_fit12345_2024.csv",
                   verbose = TRUE)
 

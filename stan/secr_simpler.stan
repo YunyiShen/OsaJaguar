@@ -52,7 +52,7 @@ model {
             logliklocal_occu = rep_vector(0, n_grid);
             for(j in 1:n_trap){
                 log_det = log_p0[1] * (1-sex[i]) + log_p0[2] * sex[i] - exp(log_sigma[1] * (1-sex[i]) + log_sigma[2] * sex[i]) * distsqr[,j];
-                loglikdetprob += yred[i,j] * log_det + (deployred[j] - yred[i,j]) * log1m_exp(log_det) + binomial_normalization[i,j];
+                loglikdetprob += yred[i,j] * log_det + (deployred[j] - yred[i,j]) * log1m_exp(log_det); //+ binomial_normalization[i,j];
             }
 
             logliklocal_occu = log_softmax_Xbeta + loglikdetprob + log_psi[1] * (1-sex[i]) + log_psi[2] * sex[i];
@@ -88,7 +88,7 @@ generated quantities {
             logliklocal_occu = rep_vector(0, n_grid);
             for (j in 1:n_trap){
                 log_det = log_p0[1] * (1-sex[i]) + log_p0[2] * sex[i] - exp(log_sigma[1] * (1-sex[i]) + log_sigma[2] * sex[i]) * distsqr[,j];
-                loglikdetprob += yred[i,j] * log_det + (deployred[j] - yred[i,j]) * log1m_exp(log_det) + binomial_normalization[i,j];
+                loglikdetprob += yred[i,j] * log_det + (deployred[j] - yred[i,j]) * log1m_exp(log_det);// + binomial_normalization[i,j];
             }
 
             logliklocal_occu = log_softmax_Xbeta + loglikdetprob + log_psi[1] * (1-sex[i]) + log_psi[2] * sex[i];

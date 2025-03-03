@@ -4,7 +4,7 @@
     "max_individual": 60, // data augmentation number of individuals
     "scaling": 10000, // how many meters to scale locations when running scr
     "buffer": 1.0, // buffer range, in scale km
-    "resolution": 1.0, // grid size, in scale km
+    "resolution": 3.0, // grid size, in scale km
     "stan_iters": 1000 // how many interations to run?
   }
   

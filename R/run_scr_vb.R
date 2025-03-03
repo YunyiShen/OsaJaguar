@@ -16,12 +16,14 @@ rstan_options(auto_write = TRUE)
 
 load("./processed_data/scr_stan_data.rda")
 m_init <- stan_model("./stan/secr_simpler.stan")
+stan_data$everdetected <- as.integer(stan_data$everdetected)
 
 set.seed(12345)
 m_fit <- vb(m_init,  data = stan_data, 
                     iter = config$stan_iters, 
                   init = function() list(log_psi = log(c(0.15, 0.15)), 
-                                         log_p0 = log(c(.06, 0.06)), 
+                                         log_p0 = log(c(.2, 0.2)), 
+                                         sigma = log(c(1.,1.)),
                                          beta = rep(0,stan_data$n_env)), 
                   sample_file = "./res/scr_stan_fit12345_vb.csv")
 
