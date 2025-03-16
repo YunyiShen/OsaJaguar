@@ -5,11 +5,11 @@ library(reshape)
 library(fields)
 source("./R/util.R")
 
-load("./res/scr_stan_fit12345_vb.rda")
+load("./res/scr_stan_fit12345_2024_withTico.rda")
 
 z <- rstan::extract(m_fit, c("z"))$z
 NN = rowSums(z)
-jpeg("./res/Figs/popsize_est.jpg", 
+jpeg("./res/Figs/popsize_est_withTico.jpg", 
         width = 6, height = 4, units = "in",
         res = 500)
 par(mar = c(2.5,2.5,1.7,.5), mgp = c(1.5, 0.5, 0))
@@ -17,7 +17,7 @@ hist(NN, freq = TRUE, xlab = "Population size", main = "")
 dev.off()
 
 beta_env = rstan::extract(m_fit, c("betaenv"))$betaenv
-jpeg("./res/Figs/env_beta.jpg", 
+jpeg("./res/Figs/env_beta_withTico.jpg", 
         width = 8 * 1.2, 
         height = 4 * 1.2, units = "in",res = 500)
 par(mfrow = c(2,4),mar = c(2.5,2.5,1.7,.5), mgp = c(1.5, 0.5, 0))
@@ -52,7 +52,7 @@ abline(v=0, lwd = 2)
 
 dev.off()
 
-jpeg("./res/Figs/density_est.jpg", 
+jpeg("./res/Figs/density_est_withTico.jpg", 
         width = 6, height = 6, units = "in",
         res = 500)
 par(mar = c(.5,.5,1.7,.5), mgp = c(1.5, 0.5, 0))

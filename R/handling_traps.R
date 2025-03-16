@@ -1,10 +1,20 @@
 library(terra)
 library(sf)
+library(jsonlite)
+
+config = fromJSON("./config.json")
+remove_source = config$remove_data_from
+
 traps = read.csv("./processed_data/Effort_Locations_Combined.csv")
 mask = rast("./processed_data/processed_raster/mask.tif")
 
 
 #### deal with trap locations ####
+for (bad in remove_source) {
+  traps = traps[traps$Data.From != bad,]
+}
+
+
 traps_sf = st_as_sf(traps, coords = c("Trap.Station.Longitude",
                                       "Trap.Station.Latitude"), 
                     crs = 4326) |>
@@ -17,10 +27,17 @@ traps_sf$y = st_coordinates(traps_sf)[,2]
 traps_sf$mask = extract(mask, st_coordinates(traps_sf)) |> unlist()
 traps_sf = traps_sf[!is.na( traps_sf$mask),]
 
+
+
 save(traps_sf, file = "./processed_data/traps_loc.rda")
 
 #### deal with detections ####
 detections = read.csv("./rawdata/Detection_History_Combined.csv")
+for (bad in remove_source) {
+  detections = detections[detections$Data.From != bad,]
+}
+
+
 detections_sf = st_as_sf(detections, coords = c("Trap.Station.Longitude",
                                       "Trap.Station.Latitude"), 
                          crs = 4326) |>

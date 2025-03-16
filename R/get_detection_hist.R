@@ -14,13 +14,16 @@ year_range <- format(date_range,"%Y")
 ## handle occasions
 traps_sf$Setup_date = as.Date(traps_sf$Start_Date, format = "%m/%d/%Y")
 traps_sf$Retrieval_date = as.Date(traps_sf$End_Date, format = "%m/%d/%Y")
-overall_start_date = min(traps_sf$Setup_date)
-traps_sf$Setup_occasion = floor(as.numeric(traps_sf$Setup_date - overall_start_date)/occ_days) + 1
-traps_sf$Retrieval_occasion = floor(as.numeric(traps_sf$Retrieval_date - overall_start_date)/occ_days) + 1
+tmp_start = ifelse(traps_sf$Setup_date <= traps_sf$Retrieval_date, traps_sf$Setup_date, traps_sf$Retrieval_date)
+tmp_end = ifelse(traps_sf$Setup_date <= traps_sf$Retrieval_date, traps_sf$Retrieval_date, traps_sf$Setup_date)
+overall_start_date = min(tmp_start)
+traps_sf$Setup_occasion = floor(as.numeric(tmp_start - overall_start_date)/occ_days) + 1
+traps_sf$Retrieval_occasion = floor(as.numeric(tmp_end - overall_start_date)/occ_days) + 1
 
 ## handle detection occasions
+overall_start_date_normal = as.Date(overall_start_date, origin = "1970-01-01")
 detections_sf$Date = as.Date(detections_sf$Date.Time, format = "%m/%d/%y %H:%M")
-detections_sf$Occasion = floor(as.numeric(detections_sf$Date - overall_start_date)/occ_days) + 1
+detections_sf$Occasion = floor(as.numeric(detections_sf$Date - overall_start_date_normal)/occ_days) + 1
 
 ## enumeration of traps ## 
 trap_ids <- data.frame(unique(as.data.frame(traps_sf)[,c("Station.Name","x","y")]))
