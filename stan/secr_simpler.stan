@@ -28,10 +28,10 @@ transformed data {
 
 parameters {
     // whether alive or not 
-    vector[2] log_psi; // survival probability
+    vector<upper = 0>[2] log_psi; // survival probability
     // detection related 
     vector[2] log_sigma; // sd of detection probability decay
-    vector[2] log_p0; // detection probability at trap
+    vector<upper = 0>[2] log_p0; // detection probability at trap
 
     // activitiy center realted
     vector[n_env] betaenv;
@@ -66,10 +66,10 @@ model {
             
         }
         // priors
-        log_psi ~ normal(0, 1);
+        log_psi ~ normal(0, 5);
         log_sigma ~ normal(0, 10);
-        log_p0 ~ normal(0, 1);
-        betaenv ~ normal(0, 100);
+        log_p0 ~ normal(0, 5);
+        betaenv ~ normal(0, 1);
     }
 }
 
