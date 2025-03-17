@@ -1,3 +1,33 @@
+library(terra)
+
+SCRdensity_tiff <- function(s, z, pts, scale = 10000){
+
+  mask = rast("./processed_data/processed_raster/mask.tif")
+  resolution = res(mask)/scale
+
+  n_pts = nrow(pts)
+  n_samples = nrow(s)
+
+  centerat = rep(0, n_pts)
+
+  for(i in 1:n_samples){
+    loc_alive = s[i,][z[i,] == 1]
+    centerat[loc_alive] = centerat[loc_alive] + 1
+  }
+  density = data.frame(x = pts[,1]*scale, y = pts[,2]*scale, 
+                      density = (centerat/n_samples)/prod(resolution))
+  points <- vect(density, geom = c("x", "y"), crs = crs(mask))  # Adjust CRS if needed
+
+  r <- rasterize(points, mask, density$density)
+  #writeRaster(r, filename, format="GTiff")
+  return(r)
+}
+
+
+
+
+
+
 SCRdensity <- function(s, z, pts, plotit = TRUE,
                       nx = 30, ny = 30, Xl = NULL, Xu = NULL, Yl = NULL, 
                       Yu = NULL, scalein = 100, scaleout = 100, 
