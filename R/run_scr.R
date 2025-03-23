@@ -24,8 +24,18 @@ m_fit <- sampling(m_init,  data = stan_data,chains = 4,
                                          log_p0 = log(c(.2, 0.2)), 
                                          sigma = log(c(1.,1.)),
                                          beta = rep(0,stan_data$n_env)),
-                  sample_file = "./res/scr_stan_fit12345_2024.csv",
+                  sample_file = paste0("./res/scr_stan_fit12345_2024_",config$resolution,"km",config$postfix,".csv"),
                   verbose = TRUE)
 
 save(m_fit, jaguar_trap_mats, stan_data, config,
-     file="./res/scr_stan_fit12345_2024.rda")
+     file=paste0("./res/scr_stan_fit12345_2024_",config$resolution,"km",config$postfix,".rda"))
+
+library(sf)
+library(ggplot2)
+library(reshape)
+source("./R/util.R")
+z <- rstan::extract(m_fit, c("z"))$z
+s = rstan::extract(m_fit, c("s"))$s
+density_est = SCRdensity_tiff(s, z, stan_data$grid_pts)
+writeRaster(density_est, paste0("./res/density_est",config$resolution,"km", config$postfix, ".tiff"),
+                overwrite=TRUE)

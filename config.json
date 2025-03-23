@@ -4,8 +4,9 @@
     "max_individual": 60, // data augmentation number of individuals
     "scaling": 10000, // how many meters to scale locations when running scr
     "buffer": 1.0, // buffer range, in scale km
-    "resolution": 2.0, // grid size, in scale km
+    "resolution": 1.5, // grid size, in scale km
     "stan_iters": 1000, // how many interations to run?
-    "remove_data_from": [] // remove any data source?
+    "remove_data_from": ["Tico"], // remove any data source?
+    "postfix": ""
   }
   

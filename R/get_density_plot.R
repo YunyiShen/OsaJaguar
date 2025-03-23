@@ -4,7 +4,7 @@ library(ggplot2)
 library(reshape)
 source("./R/util.R")
 
-postfix = "_withTico_2km"
+postfix = "_1.5km"
 load( paste0("./res/scr_stan_fit12345_2024",postfix,".rda"))
 
 z <- rstan::extract(m_fit, c("z"))$z
