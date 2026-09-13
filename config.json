@@ -6,7 +6,10 @@
     "buffer": 1.0, // buffer range, in scale km
     "resolution": 1.5, // grid size, in scale km
     "stan_iters": 1000, // how many interations to run?
-    "remove_data_from": ["Tico"], // remove any data source?
-    "postfix": ""
+    "remove_data_from": [], // remove any data source?
+    "postfix": "_with_Tico" // postfix for the output file
+
+    //"remove_data_from": ["Tico"], // remove any data source?
+    //"postfix": ""
   }
   

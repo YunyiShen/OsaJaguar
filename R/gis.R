@@ -15,12 +15,17 @@ print("handling rasters")
 #### deal with human influence index ####
 ele = rast("./rawraster/SRTM_30m_31971_AmistOsa.tif")
 ghm = rast("./rawraster/gHM.tif")
+dist_to_corc = rast("./rawraster/distance_to_corcovado_in_meters_100m_resolution.tif")
 
 mask_for_ghm = project(ele, crs(ghm))
 ghm = resample(ghm, mask_for_ghm)
 ghm = project(ghm, crs(ele))
 
+dist_to_corc = resample(dist_to_corc, mask_for_ghm)
+dist_to_corc = project(dist_to_corc, crs(ele))
+
 writeRaster(ghm, "./processed_data/processed_raster/gHM.tif", overwrite=TRUE)
+writeRaster(ghm, "./processed_data/processed_raster/dist_to_corc.tif", overwrite=TRUE)
 
 #### deal with elevation, ruggness and lclu ####
 lclu = rast("./rawraster/lulc_2017.tif")
@@ -36,6 +41,8 @@ res(tmpl) = res * c(1000, 1000)
 lclu = resample(lclu, tmpl, method = "near")
 ele = resample(ele, lclu, method = "bilinear")
 rugg = resample(rugg, lclu, method = "bilinear")
+
+
 plot(lclu)
 dev.off()
 
@@ -65,6 +72,7 @@ lclu = rast("./processed_data/processed_raster/lulc.tif")
 #   Grassland, Urban, Old growth forest, Secondary forest, 
 #   Wetland, Teak
 ghm = rast( "./processed_data/processed_raster/gHM.tif")
+dist_to_corc = rast( "./processed_data/processed_raster/dist_to_corc.tif")
 
 full_mask = (ele>-10000) * (lclu >= 0)
 plot(full_mask)
@@ -80,6 +88,7 @@ inside = st_intersects(pixel_centers_sf, reserve)
 inside = sapply(inside, function(w){1*(length(w)>0)})
 
 pixel_centers$conservation = inside
+pixel_centers$dist_to_corc = extrac(dist_to_corc, st_coordinates(pixel_centers_sf))[[1]] # distance to corcovado
 pixel_centers$ele = extract(ele, st_coordinates(pixel_centers_sf))[[1]]
 pixel_centers$rugg = extract(rugg, st_coordinates(pixel_centers_sf))[[1]]
 pixel_centers$lclu = extract(lclu, st_coordinates(pixel_centers_sf))[[1]]

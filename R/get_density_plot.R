@@ -80,8 +80,8 @@ par(mar = c(.5,.5,1.7,.5), mgp = c(1.5, 0.5, 0))
 #range_pts = apply(stan_data$grid_pts, 2, max) - apply(stan_data$grid_pts, 2, min)
 s = rstan::extract(m_fit, c("s"))$s
 density_est = SCRdensity_tiff(s, z, stan_data$grid_pts)
-writeRaster(density_est, paste0("./res/density_est", postfix, ".tiff"),
-                overwrite=TRUE)
+#writeRaster(density_est, paste0("./res/density_est", postfix, ".tiff"),
+#                overwrite=TRUE)
 
 
 plot(density_est, col = gray.colors(30, start = 0., 

@@ -1,6 +1,6 @@
 #!/bin/bash
-module load anaconda/2023a
-source activate Rstan
+#module load anaconda/2023a
+#source activate Rstan
 
 Rscript ./R/gis.R
 Rscript ./R/handling_traps.R
