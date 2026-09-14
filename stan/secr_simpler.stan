@@ -1,10 +1,10 @@
 data {
     int<lower = 1> N;
     int<lower = 1> n_trap;
-    int<lower = 0> yred[N,n_trap]; // detection sum
-    int<lower = 0, upper = 1> everdetected[N]; // ever detected
+    array[N, n_trap] int<lower=0> yred; // detection sum
+    array[N] int<lower=0, upper=1> everdetected; // ever detected
     vector<lower=0, upper=1>[N] sex; // sex of the individuals
-    int<lower = 0> deployred[n_trap]; //total number of deployments
+    array[n_trap] int<lower=0> deployred; //total number of deployments
     matrix[n_trap, 2] X; //trap locations
 
     int<lower = 1> n_grid;

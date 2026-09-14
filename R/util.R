@@ -18,7 +18,7 @@ SCRdensity_tiff <- function(s, z, pts, scale = 10000){
                       density = (centerat/n_samples)/prod(resolution))
   points <- vect(density, geom = c("x", "y"), crs = crs(mask))  # Adjust CRS if needed
 
-  r <- rasterize(points, mask, density$density)
+  r <- rasterize(points, mask, field = "density")
   #writeRaster(r, filename, format="GTiff")
   return(r)
 }

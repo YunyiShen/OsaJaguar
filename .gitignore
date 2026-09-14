@@ -4,3 +4,4 @@ processed_data/*
 res/*
 *.sh.log*
 rawraster/*
+.Rhistory

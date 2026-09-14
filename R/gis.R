@@ -88,7 +88,7 @@ inside = st_intersects(pixel_centers_sf, reserve)
 inside = sapply(inside, function(w){1*(length(w)>0)})
 
 pixel_centers$conservation = inside
-pixel_centers$dist_to_corc = extrac(dist_to_corc, st_coordinates(pixel_centers_sf))[[1]] # distance to corcovado
+pixel_centers$dist_to_corc = extract(dist_to_corc, st_coordinates(pixel_centers_sf))[[1]] # distance to corcovado
 pixel_centers$ele = extract(ele, st_coordinates(pixel_centers_sf))[[1]]
 pixel_centers$rugg = extract(rugg, st_coordinates(pixel_centers_sf))[[1]]
 pixel_centers$lclu = extract(lclu, st_coordinates(pixel_centers_sf))[[1]]

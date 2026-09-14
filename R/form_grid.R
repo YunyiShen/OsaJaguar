@@ -9,8 +9,8 @@ grid = read.csv("./processed_data/grid_points_secr.csv")
 grid_pts = as.matrix(grid[,c("x","y")]/scaling)
 trap_X = jaguar_trap_mats$ids$trap_ids[,c("x","y")]/scaling
 
-env_covar = as.matrix(grid[,c(3,4,5,7,8,9,10)])
-env_covar[,2:4] = scale(env_covar[,2:4]) # scale continuous covariates
+env_covar = as.matrix(grid[,c(3:6,8:12)])
+env_covar[,c(2,3,4,5)] = scale(env_covar[,2:5]) # scale continuous covariates
 #env_covar = scale(env_covar) # scale all
 print(nrow(grid_pts))
 distsqr = matrix(0, nrow = nrow(grid_pts), ncol = nrow(trap_X))
