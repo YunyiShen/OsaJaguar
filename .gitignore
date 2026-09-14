@@ -5,3 +5,4 @@ res/*
 *.sh.log*
 rawraster/*
 .Rhistory
+!res/Figs
